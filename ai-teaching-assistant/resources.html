@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources - EduAI</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">
+            <span class="logo-icon">🎓</span>
+            <span>EduAI</span>
+        </a>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="chat.html">AI Tutor</a>
+            <a href="quiz.html">Quizzes</a>
+            <a href="resources.html" class="active">Resources</a>
+        </div>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <!-- Resources Header -->
+    <div class="resources-header">
+        <h1>📚 Learning Resources</h1>
+        <p>Explore lesson plans, worksheets, videos, and activities for every grade level</p>
+    </div>
+
+    <!-- Teacher Add Button -->
+    <div class="teacher-controls" id="teacherControls" style="display: none;">
+        <div class="teacher-bar">
+            <span>👩‍🏫 Teacher Mode</span>
+            <button class="btn btn-accent btn-sm" onclick="showAddResourceModal()">➕ Add Resource</button>
+        </div>
+    </div>
+
+    <!-- Add/Edit Resource Modal -->
+    <div class="modal-overlay" id="resourceModal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Resource</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="resourceForm" onsubmit="handleResourceSubmit(event)">
+                <div class="form-group">
+                    <label for="resTitle">Title</label>
+                    <input type="text" id="resTitle" placeholder="Resource title" required>
+                </div>
+                <div class="form-group">
+                    <label for="resDesc">Description</label>
+                    <textarea id="resDesc" placeholder="Brief description" rows="3" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="resType">Type</label>
+                        <select id="resType" required>
+                            <option value="lesson">Lesson Plan</option>
+                            <option value="worksheet">Worksheet</option>
+                            <option value="video">Video</option>
+                            <option value="activity">Activity</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="resGrade">Grade Level</label>
+                        <select id="resGrade" required>
+                            <option value="primary">Primary (K-5)</option>
+                            <option value="middle">Middle (6-8)</option>
+                            <option value="high">High School (9-12)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="resSubject">Subject</label>
+                        <select id="resSubject" required>
+                            <option value="math">Mathematics</option>
+                            <option value="science">Science</option>
+                            <option value="english">English</option>
+                            <option value="history">History</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="resDuration">Duration</label>
+                        <input type="text" id="resDuration" placeholder="e.g. 45 min" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="resNotes">Related Notes (Optional)</label>
+                    <textarea id="resNotes" placeholder="Add any related notes or additional information" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="resDocUrl">Document Link (PDF/Word) (Optional)</label>
+                    <input type="url" id="resDocUrl" placeholder="Link to PDF or Word document">
+                    <small style="color: var(--text-light); font-size: 0.85rem;">Provide a link to a downloadable PDF or Word document for this resource</small>
+                </div>
+                <input type="hidden" id="resEditIndex" value="-1">
+                <button type="submit" class="btn btn-accent auth-submit-btn" id="resSubmitBtn">Add Resource</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="resources-filters">
+        <div class="filter-group">
+            <label for="filterGrade">Grade:</label>
+            <select id="filterGrade" onchange="filterResources()">
+                <option value="all">All Grades</option>
+                <option value="primary">Primary (K-5)</option>
+                <option value="middle">Middle (6-8)</option>
+                <option value="high">High School (9-12)</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filterSubject">Subject:</label>
+            <select id="filterSubject" onchange="filterResources()">
+                <option value="all">All Subjects</option>
+                <option value="math">Mathematics</option>
+                <option value="science">Science</option>
+                <option value="english">English</option>
+                <option value="history">History</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filterType">Type:</label>
+            <select id="filterType" onchange="filterResources()">
+                <option value="all">All Types</option>
+                <option value="lesson">Lesson Plans</option>
+                <option value="worksheet">Worksheets</option>
+                <option value="video">Videos</option>
+                <option value="activity">Activities</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Resources Grid -->
+    <div class="resources-grid" id="resourcesGrid">
+        <!-- Resources will be injected by JS -->
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>🎓 EduAI</h4>
+                <p>AI-powered teaching assistant designed for multi-grade classrooms.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="chat.html">AI Tutor</a>
+                <a href="quiz.html">Quizzes</a>
+                <a href="resources.html">Resources</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 EduAI - AI Teaching Assistant. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Default resources
+        const defaultResources = [
+            { title: "Introduction to Fractions", desc: "A step-by-step lesson plan covering basic fractions with visual aids and hands-on activities.", type: "lesson", grade: "primary", subject: "math", duration: "45 min", notes: "Key concepts: Numerator, denominator, equivalent fractions. Practice with pizza slices and pie charts.", docUrl: "#" },
+            { title: "Photosynthesis Worksheet", desc: "Fill-in-the-blank and diagram labeling worksheet on how plants make food.", type: "worksheet", grade: "middle", subject: "science", duration: "30 min", notes: "Remember: 6CO2 + 6H2O + light → C6H12O6 + 6O2. Focus on chloroplasts and chlorophyll.", docUrl: "#" },
+            { title: "Parts of Speech Adventure", desc: "Interactive activity to identify nouns, verbs, adjectives, and adverbs in fun sentences.", type: "activity", grade: "primary", subject: "english", duration: "35 min", notes: "Use color coding: Nouns (blue), Verbs (red), Adjectives (green), Adverbs (yellow).", docUrl: "#" },
+            { title: "World War II Overview", desc: "Video lesson covering the major events, causes, and outcomes of World War II.", type: "video", grade: "high", subject: "history", duration: "20 min", notes: "Timeline: 1939-1945. Major events: Pearl Harbor, D-Day, Holocaust, atomic bombs.", docUrl: "#" },
+            { title: "Algebraic Expressions", desc: "Comprehensive lesson plan on simplifying and evaluating algebraic expressions.", type: "lesson", grade: "middle", subject: "math", duration: "50 min", notes: "Focus on combining like terms, distributive property, and order of operations (PEMDAS).", docUrl: "#" },
+            { title: "The Solar System Explorer", desc: "Hands-on activity where students create a scale model of the solar system.", type: "activity", grade: "primary", subject: "science", duration: "60 min", notes: "Planet order: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune. Use different sized balls.", docUrl: "#" },
+            { title: "Essay Writing Guide", desc: "Step-by-step worksheet on structuring persuasive and narrative essays.", type: "worksheet", grade: "high", subject: "english", duration: "40 min", notes: "Essay structure: Introduction (hook, thesis), Body paragraphs (topic sentence, evidence), Conclusion.", docUrl: "#" },
+            { title: "Ancient Civilizations", desc: "Lesson plan exploring Egyptian, Greek, and Roman civilizations with timeline activities.", type: "lesson", grade: "middle", subject: "history", duration: "55 min", notes: "Compare pyramids, democracy, and engineering achievements. Timeline: Egypt (3100 BCE), Greece (800 BCE), Rome (753 BCE).", docUrl: "#" },
+            { title: "Calculus Fundamentals", desc: "Video introduction to limits, derivatives, and basic integration concepts.", type: "video", grade: "high", subject: "math", duration: "25 min", notes: "Derivative represents rate of change. Power rule: d/dx(x^n) = nx^(n-1). Integration is reverse of differentiation.", docUrl: "#" },
+            { title: "Animal Classification", desc: "Sorting activity where students classify animals into vertebrates and invertebrates.", type: "activity", grade: "primary", subject: "science", duration: "30 min", notes: "Vertebrates have backbones: fish, amphibians, reptiles, birds, mammals. Invertebrates: insects, worms, mollusks.", docUrl: "#" },
+            { title: "Shakespeare Introduction", desc: "Lesson plan introducing Shakespeare's life, works, and impact on English literature.", type: "lesson", grade: "high", subject: "english", duration: "45 min", notes: "Born 1564 in Stratford-upon-Avon. Famous works: Romeo & Juliet, Hamlet, Macbeth. Coined 1700+ words.", docUrl: "#" },
+            { title: "Chemistry Lab: Reactions", desc: "Worksheet guiding students through safe chemical reaction experiments.", type: "worksheet", grade: "high", subject: "science", duration: "50 min", notes: "Safety first! Types of reactions: synthesis, decomposition, single/double replacement, combustion.", docUrl: "#" },
+        ];
+
+        // Load resources from localStorage or use defaults
+        function loadResources() {
+            const saved = localStorage.getItem('eduai_resources');
+            if (saved) return JSON.parse(saved);
+            localStorage.setItem('eduai_resources', JSON.stringify(defaultResources));
+            return defaultResources;
+        }
+
+        function saveResources(resources) {
+            localStorage.setItem('eduai_resources', JSON.stringify(resources));
+        }
+
+        let resources = loadResources();
+        let teacherMode = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            teacherMode = isTeacher();
+            if (teacherMode) {
+                document.getElementById('teacherControls').style.display = 'block';
+            }
+            renderResources(getFilteredResources());
+        });
+
+        function getFilteredResources() {
+            const grade = document.getElementById('filterGrade').value;
+            const subject = document.getElementById('filterSubject').value;
+            const type = document.getElementById('filterType').value;
+
+            let filtered = resources;
+            if (grade !== 'all') filtered = filtered.filter(r => r.grade === grade);
+            if (subject !== 'all') filtered = filtered.filter(r => r.subject === subject);
+            if (type !== 'all') filtered = filtered.filter(r => r.type === type);
+            return filtered;
+        }
+
+        function renderResources(filteredResources) {
+            const grid = document.getElementById('resourcesGrid');
+            if (filteredResources.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 3rem;">No resources found matching your filters. Try adjusting your selection.</p>';
+                return;
+            }
+            grid.innerHTML = filteredResources.map((r, i) => {
+                const realIndex = resources.indexOf(r);
+                return `
+                <div class="resource-card">
+                    <span class="resource-type ${r.type}">${r.type}</span>
+                    <h3>${r.title}</h3>
+                    <p class="resource-desc">${r.desc}</p>
+                    <div class="resource-meta">
+                        <div class="resource-tags">
+                            <span>${r.grade}</span>
+                            <span>${r.subject}</span>
+                        </div>
+                        <span>⏱️ ${r.duration}</span>
+                    </div>
+                    ${r.notes ? `
+                    <div class="resource-notes">
+                        <h4>📝 Notes</h4>
+                        <p>${r.notes}</p>
+                    </div>` : ''}
+                    ${r.docUrl ? `
+                    <div class="resource-document">
+                        <a href="${r.docUrl}" target="_blank" class="doc-download-btn">
+                            <span class="doc-icon">📄</span>
+                            <span>Download Document</span>
+                        </a>
+                    </div>` : ''}
+                    ${teacherMode ? `
+                    <div class="resource-actions">
+                        <button class="btn btn-sm btn-outline" onclick="editResource(${realIndex})">✏️ Edit</button>
+                        <button class="btn btn-sm btn-remove" onclick="deleteResource(${realIndex})">🗑️ Delete</button>
+                    </div>` : ''}
+                </div>
+            `}).join('');
+        }
+
+        function filterResources() {
+            renderResources(getFilteredResources());
+        }
+
+        // Modal functions
+        function showAddResourceModal() {
+            document.getElementById('modalTitle').textContent = 'Add New Resource';
+            document.getElementById('resSubmitBtn').textContent = 'Add Resource';
+            document.getElementById('resourceForm').reset();
+            document.getElementById('resEditIndex').value = '-1';
+            document.getElementById('resourceModal').style.display = 'flex';
+        }
+
+        function editResource(index) {
+            const r = resources[index];
+            document.getElementById('modalTitle').textContent = 'Edit Resource';
+            document.getElementById('resSubmitBtn').textContent = 'Save Changes';
+            document.getElementById('resTitle').value = r.title;
+            document.getElementById('resDesc').value = r.desc;
+            document.getElementById('resType').value = r.type;
+            document.getElementById('resGrade').value = r.grade;
+            document.getElementById('resSubject').value = r.subject;
+            document.getElementById('resDuration').value = r.duration;
+            document.getElementById('resNotes').value = r.notes || '';
+            document.getElementById('resDocUrl').value = r.docUrl || '';
+            document.getElementById('resEditIndex').value = index;
+            document.getElementById('resourceModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('resourceModal').style.display = 'none';
+        }
+
+        function handleResourceSubmit(e) {
+            e.preventDefault();
+            const resource = {
+                title: document.getElementById('resTitle').value.trim(),
+                desc: document.getElementById('resDesc').value.trim(),
+                type: document.getElementById('resType').value,
+                grade: document.getElementById('resGrade').value,
+                subject: document.getElementById('resSubject').value,
+                duration: document.getElementById('resDuration').value.trim(),
+                notes: document.getElementById('resNotes').value.trim(),
+                docUrl: document.getElementById('resDocUrl').value.trim()
+            };
+
+            const editIndex = parseInt(document.getElementById('resEditIndex').value);
+            if (editIndex >= 0) {
+                resources[editIndex] = resource;
+            } else {
+                resources.unshift(resource);
+            }
+
+            saveResources(resources);
+            closeModal();
+            renderResources(getFilteredResources());
+        }
+
+        function deleteResource(index) {
+            if (!confirm(`Delete "${resources[index].title}"?`)) return;
+            resources.splice(index, 1);
+            saveResources(resources);
+            renderResources(getFilteredResources());
+        }
+
+        // Close modal on overlay click
+        document.getElementById('resourceModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeModal();
+        });
+    </script>
+</body>
+</html>
